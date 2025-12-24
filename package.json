@@ -1,13 +1,14 @@
 {
   "name": "api2",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "User profile and authentication backend",
+  "main": "backend/src/index.js",
   "scripts": {
-    "dev": "node backend/src/index.js"
+    "start": "node backend/src/index.js",
+    "dev": "nodemon backend/src/index.js"
   },
   "keywords": [],
-  "author": "",
+  "author": "Ziad",
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
@@ -19,5 +20,8 @@
     "mongoose": "^9.0.2",
     "multer": "^2.0.2",
     "nodemailer": "^7.0.12"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
   }
 }
