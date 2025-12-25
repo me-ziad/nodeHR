@@ -1,11 +1,12 @@
 const express = require('express');
 const auth = require('../middleware/auth.middleware');
+const allowRoles = require('../middleware/roles'); // ✅ middleware للتحكم في الصلاحيات
 const User = require('../Model/user.model');
 
 const router = express.Router();
 
-// ✅ عرض كل الـ education
-router.get('/', auth, async (req, res) => {
+// ✅ عرض كل الـ education (خاص بالـ Seeker فقط)
+router.get('/', auth, allowRoles('SEEKER'), async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select('education');
     if (!user) return res.status(404).json({ message: 'User not found' });
@@ -15,8 +16,8 @@ router.get('/', auth, async (req, res) => {
   }
 });
 
-// ✅ إضافة تعليم جديد
-router.post('/', auth, async (req, res) => {
+// ✅ إضافة تعليم جديد (خاص بالـ Seeker فقط)
+router.post('/', auth, allowRoles('SEEKER'), async (req, res) => {
   try {
     const { school, degree, fieldOfStudy, startDate, endDate, description } = req.body;
     if (!school || !degree) {
@@ -33,8 +34,8 @@ router.post('/', auth, async (req, res) => {
   }
 });
 
-// ✅ تعديل تعليم موجود
-router.put('/:eduId', auth, async (req, res) => {
+// ✅ تعديل تعليم موجود (خاص بالـ Seeker فقط)
+router.put('/:eduId', auth, allowRoles('SEEKER'), async (req, res) => {
   try {
     const { eduId } = req.params;
     const updates = req.body;
@@ -51,8 +52,9 @@ router.put('/:eduId', auth, async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 });
-// ✅ حذف تعليم معين
-router.delete('/:eduId', auth, async (req, res) => {
+
+// ✅ حذف تعليم معين (خاص بالـ Seeker فقط)
+router.delete('/:eduId', auth, allowRoles('SEEKER'), async (req, res) => {
   try {
     const { eduId } = req.params;
 
@@ -61,7 +63,6 @@ router.delete('/:eduId', auth, async (req, res) => {
 
     const beforeCount = (user.education || []).length;
 
-    // فلترة حسب _id
     user.education = (user.education || []).filter(
       (edu) => edu?._id?.toString() !== eduId
     );

@@ -28,50 +28,61 @@ const userSchema = new mongoose.Schema({
     trim: true,
     minlength: [2, 'Name must be at least 2 characters long']
   },
-phone: {
-  type: String,
-  match: [/^\+?[0-9\s]{7,20}$/, 'Please enter a valid phone number']
-},
+  phone: {
+    type: String,
+    match: [/^\+?[0-9\s]{7,20}$/, 'Please enter a valid phone number']
+  },
   address: { type: String, trim: true },
-  company: { type: String, trim: true },
-  position: { type: String, trim: true },
+  position: { type: String, trim: true }, // منصب الشخص (HR Manager أو الوظيفة المستهدفة للـ seeker)
   bio: { type: String, maxlength: [500, 'Bio cannot exceed 500 characters'] },
   avatar: { type: String, default: 'default.png' },
 
-  // ✅ هنا أضفنا حقول الـ CV
+  // ✅ حقول خاصة بالـ HR
+  companyName: { type: String, trim: true },
+  companyWebsite: { type: String, trim: true },
+  companyDescription: { type: String, trim: true },
+  industry: { type: String, trim: true },
+  foundedYear: { type: Number },
+  size: { type: String, trim: true }, // Small, Medium, Enterprise
+
+  // ✅ نشاط التوظيف للـ HR
+  jobsPosted: { type: Number, default: 0 },            // عدد الوظائف اللي نشرها
+  activeJobs: { type: Number, default: 0 },            // الوظائف الحالية المفتوحة
+  applicationsReceived: { type: Number, default: 0 },  // عدد الطلبات اللي وصلت
+
+  // ✅ حقول خاصة بالـ SEEKER
   cv: { type: String, default: null },      // اسم الملف
   cvUrl: { type: String, default: null },   // رابط الوصول للملف
   skills: [{ type: String, trim: true }],
-experience: [{
-  company: { type: String, trim: true },
-  position: { type: String, trim: true },
-  startDate: { type: Date },
-  endDate: { type: Date },
-  description: { type: String, trim: true }
-}],
-education: [{
-  school: { type: String, trim: true, required: true },        // اسم الجامعة أو المدرسة
-  degree: { type: String, trim: true, required: true },        // نوع الدرجة (Bachelor, Master, PhD)
-  fieldOfStudy: { type: String, trim: true },                  // التخصص (Computer Science, BIS...)
-  startDate: { type: Date },                                   // تاريخ بداية الدراسة
-  endDate: { type: Date },                                     // تاريخ انتهاء الدراسة
-  graduationYear: { type: Number },                            // سنة التخرج (اختياري)
-  description: { type: String, trim: true }                    // وصف إضافي (اختياري)
-}],
-projects: [{
-  title: { type: String, trim: true },
-  description: { type: String, trim: true },
-  link: { type: String, trim: true },
-  technologies: [{ type: String, trim: true }],
-  year: { type: Number },
-  images: [{ type: String }]
-}],
+  experience: [{
+    company: { type: String, trim: true },
+    position: { type: String, trim: true },
+    startDate: { type: Date },
+    endDate: { type: Date },
+    description: { type: String, trim: true }
+  }],
+  education: [{
+    school: { type: String, trim: true, required: true },
+    degree: { type: String, trim: true, required: true },
+    fieldOfStudy: { type: String, trim: true },
+    startDate: { type: Date },
+    endDate: { type: Date },
+    graduationYear: { type: Number },
+    description: { type: String, trim: true }
+  }],
+  projects: [{
+    title: { type: String, trim: true },
+    description: { type: String, trim: true },
+    link: { type: String, trim: true },
+    technologies: [{ type: String, trim: true }],
+    year: { type: Number },
+    images: [{ type: String }]
+  }],
 
   createdAt: { type: Date, default: Date.now },
-  resetPasswordToken: String,   // الكود OTP
-  resetPasswordExpires: Date,   // وقت انتهاء الكود
+  resetPasswordToken: String,
+  resetPasswordExpires: Date,
   resetVerified: { type: Boolean, default: false }
-
 }, { versionKey: false });
 
 const User = mongoose.model('User', userSchema);

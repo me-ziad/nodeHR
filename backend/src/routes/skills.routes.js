@@ -1,12 +1,13 @@
 // src/routes/skills.routes.js
 const express = require('express');
 const auth = require('../middleware/auth.middleware');
+const allowRoles = require('../middleware/roles'); // ✅ Middleware للتحكم في الصلاحيات
 const User = require('../Model/user.model');
 
 const router = express.Router();
 
-// ✅ عرض كل الـ skills
-router.get('/', auth, async (req, res) => {
+// ✅ عرض كل الـ skills (خاص بالـ Seeker فقط)
+router.get('/', auth, allowRoles('SEEKER'), async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select('skills');
     if (!user) return res.status(404).json({ message: 'User not found' });
@@ -16,8 +17,8 @@ router.get('/', auth, async (req, res) => {
   }
 });
 
-// ✅ إضافة skill جديدة
-router.post('/', auth, async (req, res) => {
+// ✅ إضافة skill جديدة (خاص بالـ Seeker فقط)
+router.post('/', auth, allowRoles('SEEKER'), async (req, res) => {
   try {
     const { skill } = req.body;
     if (!skill) return res.status(400).json({ message: 'Skill is required' });
@@ -32,8 +33,8 @@ router.post('/', auth, async (req, res) => {
   }
 });
 
-// ✅ تعديل skill موجودة
-router.put('/:oldSkill', auth, async (req, res) => {
+// ✅ تعديل skill موجودة (خاص بالـ Seeker فقط)
+router.put('/:oldSkill', auth, allowRoles('SEEKER'), async (req, res) => {
   try {
     const { oldSkill } = req.params;
     const { newSkill } = req.body;
@@ -48,8 +49,8 @@ router.put('/:oldSkill', auth, async (req, res) => {
   }
 });
 
-// ✅ حذف skill معينة
-router.delete('/:skill', auth, async (req, res) => {
+// ✅ حذف skill معينة (خاص بالـ Seeker فقط)
+router.delete('/:skill', auth, allowRoles('SEEKER'), async (req, res) => {
   try {
     const { skill } = req.params;
 

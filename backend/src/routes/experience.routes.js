@@ -1,11 +1,12 @@
 const express = require('express');
 const auth = require('../middleware/auth.middleware');
+const allowRoles = require('../middleware/roles'); // ✅ Middleware للتحكم في الصلاحيات
 const User = require('../Model/user.model');
 
 const router = express.Router();
 
-// ✅ عرض كل الـ experience
-router.get('/', auth, async (req, res) => {
+// ✅ عرض كل الـ experience (خاص بالـ Seeker فقط)
+router.get('/', auth, allowRoles('SEEKER'), async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select('experience');
     if (!user) return res.status(404).json({ message: 'User not found' });
@@ -15,8 +16,8 @@ router.get('/', auth, async (req, res) => {
   }
 });
 
-// ✅ إضافة تجربة جديدة
-router.post('/', auth, async (req, res) => {
+// ✅ إضافة تجربة جديدة (خاص بالـ Seeker فقط)
+router.post('/', auth, allowRoles('SEEKER'), async (req, res) => {
   try {
     const { company, position, startDate, endDate, description } = req.body;
     if (!company || !position) {
@@ -33,8 +34,8 @@ router.post('/', auth, async (req, res) => {
   }
 });
 
-// ✅ تعديل تجربة موجودة
-router.put('/:expId', auth, async (req, res) => {
+// ✅ تعديل تجربة موجودة (خاص بالـ Seeker فقط)
+router.put('/:expId', auth, allowRoles('SEEKER'), async (req, res) => {
   try {
     const { expId } = req.params;
     const updates = req.body;
@@ -52,8 +53,8 @@ router.put('/:expId', auth, async (req, res) => {
   }
 });
 
-// DELETE /auth/experience/:expId
-router.delete('/:expId', auth, async (req, res) => {
+// ✅ حذف تجربة معينة (خاص بالـ Seeker فقط)
+router.delete('/:expId', auth, allowRoles('SEEKER'), async (req, res) => {
   try {
     const { expId } = req.params;
 
@@ -62,7 +63,6 @@ router.delete('/:expId', auth, async (req, res) => {
 
     const beforeCount = (user.experience || []).length;
 
-    // فلترة حسب _id
     user.experience = (user.experience || []).filter(
       (exp) => exp?._id?.toString() !== expId
     );
@@ -74,7 +74,7 @@ router.delete('/:expId', auth, async (req, res) => {
     await user.save();
     res.json({ message: 'Experience deleted successfully', experience: user.experience });
   } catch (err) {
-    console.error('Experience delete error:', err); // مهم علشان تشوف الخطأ الحقيقي في الـ console
+    console.error('Experience delete error:', err);
     res.status(500).json({ message: 'Internal server error' });
   }
 });
