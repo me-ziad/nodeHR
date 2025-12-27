@@ -1,22 +1,20 @@
-const nodemailer = require('nodemailer');
+const { Resend } = require('resend');
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 async function sendEmail(to, subject, html) {
-  const transporter = nodemailer.createTransport({
-    host: 'smtp.gmail.com',
-    port: 587,            // ✅ استخدم 587 بدل 465
-    secure: false,        // ✅ خليها false مع 587
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS
-    }
-  });
-
-  await transporter.sendMail({
-    from: `"Jobs App" <${process.env.EMAIL_USER}>`,
-    to,
-    subject,
-    html
-  });
+  try {
+    await resend.emails.send({
+      from: process.env.EMAIL_USER || 'onboarding@resend.dev', // لازم يكون verified أو الافتراضي
+      to,
+      subject,
+      html,
+    });
+    console.log("✅ Email sent successfully");
+  } catch (err) {
+    console.error("❌ Resend error:", err);
+    throw err;
+  }
 }
 
 module.exports = sendEmail;
