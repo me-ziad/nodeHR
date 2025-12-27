@@ -159,9 +159,10 @@ router.post('/forgot-password', async (req, res) => {
     await sendEmail(email, 'Password Reset Code', html);
 
     res.json({ message: 'Reset code sent to email.' });
-  } catch (err) {
-    res.status(500).json({ message: 'Internal server error' });
-  }
+ } catch (err) {
+  console.error("Forgot password error:", err); // ✅ يطبع الخطأ في الـ logs
+  res.status(500).json({ message: err.message || 'Internal server error' });
+}
 });
 
 // التحقق من الكود
