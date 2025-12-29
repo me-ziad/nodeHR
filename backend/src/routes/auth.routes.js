@@ -26,7 +26,7 @@ router.get('/me', auth, async (req, res) => {
   }
 });
 
-// ✅ بيانات البروفايل (تفصيلية) — بدون projects
+// ✅ بيانات البروفايل (تفصيلية) — مع المشاريع
 router.get('/profile', auth, async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select('-password');
@@ -45,6 +45,7 @@ router.get('/profile', auth, async (req, res) => {
       skills: user.skills,
       experience: user.experience,
       education: user.education,
+      projects: user.projects,  
       createdAt: user.createdAt,
       updatedAt: user.updatedAt
     });
@@ -52,7 +53,6 @@ router.get('/profile', auth, async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 });
-
 // ✍️ تحديث بيانات البروفايل (skills + experience + education فقط)
 router.put('/profile', auth, upload.single('avatar'), async (req, res) => {
   try {
