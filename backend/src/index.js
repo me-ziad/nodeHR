@@ -17,6 +17,7 @@ app.use(express.json());
 
 app.use('/auth', authRouter);
 app.use('/uploads', express.static(path.join(__dirname, '../../uploads/avatars')));
+app.use('/uploads/projects', express.static(path.join(__dirname, '../uploads/projects')));
 app.use('/auth/projects', projectRoutes);
 app.use('/auth/skills', skillsRoutes);
 app.use('/auth/experience', experienceRoutes);

@@ -3,6 +3,8 @@ const auth = require('../middleware/auth.middleware');
 const allowRoles = require('../middleware/roles'); // ✅ Middleware للتحكم في الصلاحيات
 const upload = require('../middleware/upload');
 const User = require('../Model/user.model');
+const uploadProjectImages = require('../middleware/projectUpload');
+
 
 const router = express.Router();
 
@@ -153,9 +155,29 @@ router.delete('/:projectId/delete-image', auth, allowRoles('SEEKER'), async (req
 
     res.json({ message: 'Image deleted successfully', project });
   } catch (err) {
-    console.error('Delete image error:', err);
+    console.error/('Delete image error:', err);
     res.status(500).json({ message: 'Internal server error' });
   }
 });
+// رفع صور لمشروع معين
+router.put('/:projectId/upload-images', auth, allowRoles('SEEKER'), uploadProjectImages.array('images', 5), async (req, res) => {
+  try {
+    const { projectId } = req.params;
+    const user = await User.findById(req.user.id);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    const project = user.projects.id(projectId);
+    if (!project) return res.status(404).json({ message: 'Project not found' });
+
+    const filePaths = req.files.map(file => `/uploads/projects/${file.filename}`);
+    project.images = [...(project.images || []), ...filePaths];
+
+    await user.save();
+    res.json({ message: 'Images uploaded successfully', project });
+  } catch (err) {
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
 
 module.exports = router;
