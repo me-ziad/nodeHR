@@ -26,7 +26,7 @@ router.get('/me', auth, async (req, res) => {
   }
 });
 
-// ✅ بيانات البروفايل (تفصيلية) — مع المشاريع والروابط
+// ✅ بيانات البروفايل (تفصيلية) — مع المشاريع
 router.get('/profile', auth, async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select('-password');
@@ -45,14 +45,7 @@ router.get('/profile', auth, async (req, res) => {
       skills: user.skills,
       experience: user.experience,
       education: user.education,
-      projects: user.projects,
-      // ✅ روابط شخصية
-      github: user.github,
-      linkedin: user.linkedin,
-      portfolio: user.portfolio,
-      behance: user.behance,
-      dribbble: user.dribbble,
-      twitter: user.twitter,
+      projects: user.projects,  
       createdAt: user.createdAt,
       updatedAt: user.updatedAt
     });
@@ -60,7 +53,7 @@ router.get('/profile', auth, async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 });
-
+// ✍️ تحديث بيانات البروفايل (skills + experience + education فقط)
 router.put('/profile', auth, upload.single('avatar'), async (req, res) => {
   try {
     const updates = {
@@ -68,38 +61,41 @@ router.put('/profile', auth, upload.single('avatar'), async (req, res) => {
       bio: req.body.bio,
       phone: req.body.phone,
       address: req.body.address,
-      position: req.body.position,
-
-      // ✅ روابط شخصية
-      github: req.body.github,
-      linkedin: req.body.linkedin,
-      portfolio: req.body.portfolio,
-      behance: req.body.behance,
-      dribbble: req.body.dribbble,
-      twitter: req.body.twitter
+      position: req.body.position
     };
 
+    // ✅ skills
     if (req.body.skills) {
-      updates.skills =
-        typeof req.body.skills === "string"
-          ? req.body.skills.split(",").map(s => s.trim())
-          : req.body.skills;
+      if (typeof req.body.skills === 'string') {
+        updates.skills = req.body.skills.split(',').map(s => s.trim()).filter(Boolean);
+      } else {
+        updates.skills = req.body.skills;
+      }
     }
 
+    // ✅ experience
     if (req.body.experience) {
-      updates.experience =
-        typeof req.body.experience === "string"
+      try {
+        updates.experience = typeof req.body.experience === 'string'
           ? JSON.parse(req.body.experience)
           : req.body.experience;
+      } catch {
+        return res.status(400).json({ message: 'Invalid experience format' });
+      }
     }
 
+    // ✅ education
     if (req.body.education) {
-      updates.education =
-        typeof req.body.education === "string"
+      try {
+        updates.education = typeof req.body.education === 'string'
           ? JSON.parse(req.body.education)
           : req.body.education;
+      } catch {
+        return res.status(400).json({ message: 'Invalid education format' });
+      }
     }
 
+    // صورة جديدة
     if (req.file) {
       updates.avatar = req.file.filename;
     }
@@ -108,14 +104,15 @@ router.put('/profile', auth, upload.single('avatar'), async (req, res) => {
       req.user.id,
       { $set: updates },
       { new: true }
-    ).select("-password");
+    ).select('-password');
 
-    res.json({ message: "Profile updated successfully", user });
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    res.json({ message: 'Profile updated successfully', user });
   } catch (err) {
-    res.status(500).json({ message: "Internal server error" });
+    res.status(500).json({ message: 'Internal server error' });
   }
 });
-
 
 // ✅ رفع CV
 router.put('/upload-cv', auth, upload.single('cv'), async (req, res) => {
