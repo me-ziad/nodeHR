@@ -26,7 +26,7 @@ router.get('/me', auth, async (req, res) => {
   }
 });
 
-// ✅ بيانات البروفايل (تفصيلية) — مع المشاريع
+// ✅ بيانات البروفايل (تفصيلية) — مع المشاريع والروابط
 router.get('/profile', auth, async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select('-password');
@@ -45,10 +45,85 @@ router.get('/profile', auth, async (req, res) => {
       skills: user.skills,
       experience: user.experience,
       education: user.education,
-      projects: user.projects,  
+      projects: user.projects,
+      // ✅ روابط شخصية
+      github: user.github,
+      linkedin: user.linkedin,
+      portfolio: user.portfolio,
+      behance: user.behance,
+      dribbble: user.dribbble,
+      twitter: user.twitter,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt
     });
+  } catch (err) {
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// ✍️ تحديث بيانات البروفايل (skills + experience + education + الروابط)
+router.put('/profile', auth, upload.single('avatar'), async (req, res) => {
+  try {
+    const updates = {
+      name: req.body.name,
+      bio: req.body.bio,
+      phone: req.body.phone,
+      address: req.body.address,
+      position: req.body.position,
+      // ✅ روابط شخصية
+      github: req.body.github,
+      linkedin: req.body.linkedin,
+      portfolio: req.body.portfolio,
+      behance: req.body.behance,
+      dribbble: req.body.dribbble,
+      twitter: req.body.twitter
+    };
+
+    // ✅ skills
+    if (req.body.skills) {
+      if (typeof req.body.skills === 'string') {
+        updates.skills = req.body.skills.split(',').map(s => s.trim()).filter(Boolean);
+      } else {
+        updates.skills = req.body.skills;
+      }
+    }
+
+    // ✅ experience
+    if (req.body.experience) {
+      try {
+        updates.experience = typeof req.body.experience === 'string'
+          ? JSON.parse(req.body.experience)
+          : req.body.experience;
+      } catch {
+        return res.status(400).json({ message: 'Invalid experience format' });
+      }
+    }
+
+    // ✅ education
+    if (req.body.education) {
+      try {
+        updates.education = typeof req.body.education === 'string'
+          ? JSON.parse(req.body.education)
+          : req.body.education;
+      } catch {
+        return res.status(400).json({ message: 'Invalid education format' });
+      }
+    }
+
+    // صورة جديدة
+    if (req.file) {
+      updates.avatar = req.file.filename;
+    }
+
+    const user = await User.findByIdAndUpdate(
+      req.user.id,
+      { $set: updates },
+      { new: true }
+    ).select('-password');
+
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    res.json({ message: 'Profile updated successfully', user });
   } catch (err) {
     res.status(500).json({ message: 'Internal server error' });
   }
