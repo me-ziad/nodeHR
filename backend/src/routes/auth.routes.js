@@ -46,6 +46,13 @@ router.get('/profile', auth, async (req, res) => {
       experience: user.experience,
       education: user.education,
       projects: user.projects,  
+       // ✅ روابط شخصية
+      github: user.github,
+      linkedin: user.linkedin,
+      portfolio: user.portfolio,
+      behance: user.behance,
+      dribbble: user.dribbble,
+      twitter: user.twitter,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt
     });
@@ -61,7 +68,14 @@ router.put('/profile', auth, upload.single('avatar'), async (req, res) => {
       bio: req.body.bio,
       phone: req.body.phone,
       address: req.body.address,
-      position: req.body.position
+      position: req.body.position,
+            // ✅ روابط شخصية
+      github: req.body.github,
+      linkedin: req.body.linkedin,
+      portfolio: req.body.portfolio,
+      behance: req.body.behance,
+      dribbble: req.body.dribbble,
+      twitter: req.body.twitter
     };
 
     // ✅ skills
