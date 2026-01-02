@@ -36,20 +36,7 @@ const userSchema = new mongoose.Schema({
   position: { type: String, trim: true }, // منصب الشخص (HR Manager أو الوظيفة المستهدفة للـ seeker)
   bio: { type: String, maxlength: [500, 'Bio cannot exceed 500 characters'] },
   avatar: { type: String, default: 'default.png' },
-// ✅ روابط شخصية للـ SEEKER
-  github: { type: String, trim: true },
-  linkedin: { type: String, trim: true },
-  portfolio: { type: String, trim: true },   // موقع شخصي أو Portfolio
-  behance: { type: String, trim: true },     // لو مصمم
-  dribbble: { type: String, trim: true },    // لو مصمم
-  twitter: { type: String, trim: true }, // ✅ روابط شخصية للـ SEEKER
-  github: { type: String, trim: true },
-  linkedin: { type: String, trim: true },
-  portfolio: { type: String, trim: true },   // موقع شخصي أو Portfolio
-  behance: { type: String, trim: true },     // لو مصمم
-  dribbble: { type: String, trim: true },    // لو مصمم
-  twitter: { type: String, trim: true }, 
-  
+
   // ✅ حقول خاصة بالـ HR
   companyName: { type: String, trim: true },
   companyWebsite: { type: String, trim: true },
