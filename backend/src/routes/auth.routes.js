@@ -26,7 +26,7 @@ router.get('/me', auth, async (req, res) => {
   }
 });
 
-// ✅ بيانات البروفايل (تفصيلية) — مع المشاريع
+// ✅ بيانات البروفايل (تفصيلية) — مع المشاريع والروابط
 router.get('/profile', auth, async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select('-password');
@@ -45,7 +45,14 @@ router.get('/profile', auth, async (req, res) => {
       skills: user.skills,
       experience: user.experience,
       education: user.education,
-      projects: user.projects,  
+      projects: user.projects,
+      // ✅ روابط شخصية
+      github: user.github,
+      linkedin: user.linkedin,
+      portfolio: user.portfolio,
+      behance: user.behance,
+      dribbble: user.dribbble,
+      twitter: user.twitter,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt
     });
@@ -53,7 +60,9 @@ router.get('/profile', auth, async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 });
-// ✍️ تحديث بيانات البروفايل (skills + experience + education فقط)
+
+
+// ✍️ تحديث بيانات البروفايل (skills + experience + education + الروابط)
 router.put('/profile', auth, upload.single('avatar'), async (req, res) => {
   try {
     const updates = {
@@ -61,7 +70,14 @@ router.put('/profile', auth, upload.single('avatar'), async (req, res) => {
       bio: req.body.bio,
       phone: req.body.phone,
       address: req.body.address,
-      position: req.body.position
+      position: req.body.position,
+      // ✅ روابط شخصية
+      github: req.body.github,
+      linkedin: req.body.linkedin,
+      portfolio: req.body.portfolio,
+      behance: req.body.behance,
+      dribbble: req.body.dribbble,
+      twitter: req.body.twitter
     };
 
     // ✅ skills

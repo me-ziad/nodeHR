@@ -33,9 +33,17 @@ const userSchema = new mongoose.Schema({
     match: [/^\+?[0-9\s]{7,20}$/, 'Please enter a valid phone number']
   },
   address: { type: String, trim: true },
-  position: { type: String, trim: true }, // منصب الشخص (HR Manager أو الوظيفة المستهدفة للـ seeker)
+  position: { type: String, trim: true }, 
   bio: { type: String, maxlength: [500, 'Bio cannot exceed 500 characters'] },
   avatar: { type: String, default: 'default.png' },
+
+  // ✅ روابط شخصية للـ SEEKER
+  github: { type: String, trim: true },
+  linkedin: { type: String, trim: true },
+  portfolio: { type: String, trim: true },
+  behance: { type: String, trim: true },
+  dribbble: { type: String, trim: true },
+  twitter: { type: String, trim: true },
 
   // ✅ حقول خاصة بالـ HR
   companyName: { type: String, trim: true },
@@ -43,16 +51,16 @@ const userSchema = new mongoose.Schema({
   companyDescription: { type: String, trim: true },
   industry: { type: String, trim: true },
   foundedYear: { type: Number },
-  size: { type: String, trim: true }, // Small, Medium, Enterprise
+  size: { type: String, trim: true },
 
   // ✅ نشاط التوظيف للـ HR
-  jobsPosted: { type: Number, default: 0 },            // عدد الوظائف اللي نشرها
-  activeJobs: { type: Number, default: 0 },            // الوظائف الحالية المفتوحة
-  applicationsReceived: { type: Number, default: 0 },  // عدد الطلبات اللي وصلت
+  jobsPosted: { type: Number, default: 0 },
+  activeJobs: { type: Number, default: 0 },
+  applicationsReceived: { type: Number, default: 0 },
 
   // ✅ حقول خاصة بالـ SEEKER
-  cv: { type: String, default: null },      // اسم الملف
-  cvUrl: { type: String, default: null },   // رابط الوصول للملف
+  cv: { type: String, default: null },
+  cvUrl: { type: String, default: null },
   skills: [{ type: String, trim: true }],
   experience: [{
     company: { type: String, trim: true },
