@@ -10,6 +10,7 @@ const skillsRoutes = require('./routes/skills.routes');
 const experienceRoutes = require('./routes/experience.routes');
 const educationRoutes = require('./routes/education.routes');
 const hrProfileRoutes = require('./routes/hrProfile.routes'); 
+const hrRoutes = require('./Modules/Hr/hr.routes');
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -23,7 +24,7 @@ app.use('/auth/skills', skillsRoutes);
 app.use('/auth/experience', experienceRoutes);
 app.use('/auth/education', educationRoutes);
 app.use('/hr/profile', hrProfileRoutes);
-
+app.use('/hr', hrRoutes)
 
 app.get('/health', (req, res) => {
   res.json({ ok: true, status: 'Server is healthy 🚀' });
