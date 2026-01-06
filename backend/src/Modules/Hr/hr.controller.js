@@ -107,14 +107,15 @@ exports.addCompanyImages = async (req, res) => {
       return res.status(400).json({ message: 'No images uploaded' });
     }
 
-    // Normalize arrays
-    const captions = Array.isArray(req.body['captions[]'])
-      ? req.body['captions[]']
-      : [req.body['captions[]'] || ""];
-    const bios = Array.isArray(req.body['bios[]'])
-      ? req.body['bios[]']
-      : [req.body['bios[]'] || ""];
+    // اقرأ الحقول سواء اتبعت كـ captions أو captions[]
+    const rawCaptions = req.body.captions || req.body['captions[]'] || [];
+    const rawBios = req.body.bios || req.body['bios[]'] || [];
 
+    // حوّلهم Arrays دايمًا
+    const captions = Array.isArray(rawCaptions) ? rawCaptions : [rawCaptions];
+    const bios = Array.isArray(rawBios) ? rawBios : [rawBios];
+
+    // جهز الـ objects
     const imageObjects = req.files.map((file, index) => ({
       file: file.filename,
       caption: captions[index] || "",
@@ -130,7 +131,7 @@ exports.addCompanyImages = async (req, res) => {
 
     res.json({ message: 'Company images added successfully', hr });
   } catch (err) {
-    console.error(err);
+    console.error("addCompanyImages error:", err);
     res.status(500).json({ message: 'Internal server error' });
   }
 };
