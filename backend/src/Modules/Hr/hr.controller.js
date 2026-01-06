@@ -23,13 +23,11 @@ exports.updateProfile = async (req, res) => {
       return res.status(403).json({ message: 'Access denied: HR only' });
     }
 
-    // هات الـ HR الحالي
     const existing = await HR.findOne({ userId: req.user.id });
     if (!existing) {
       return res.status(404).json({ message: 'HR profile not found' });
     }
 
-    // جهز الـ updates من الـ body
     const updates = {
       fullName: req.body.fullName ?? existing.fullName,
       email: req.body.email ?? existing.email,
@@ -87,7 +85,6 @@ exports.updateProfile = async (req, res) => {
       updates.logo = req.file.filename;
     }
 
-    // اعمل التحديث
     const hr = await HR.findOneAndUpdate(
       { userId: req.user.id },
       { $set: updates },
@@ -99,7 +96,8 @@ exports.updateProfile = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
-// ✅ Add company images
+
+// ✅ Add company images (with caption & bio)
 exports.addCompanyImages = async (req, res) => {
   try {
     if (req.user.role !== 'HR') {
@@ -110,11 +108,17 @@ exports.addCompanyImages = async (req, res) => {
       return res.status(400).json({ message: 'No images uploaded' });
     }
 
-    const imageFiles = req.files.map(file => file.filename);
+    // كل صورة تبقى Object فيه file + caption + bio
+    const imageObjects = req.files.map((file, index) => ({
+      file: file.filename,
+      caption: req.body.captions ? req.body.captions[index] : "",
+      bio: req.body.bios ? req.body.bios[index] : "",
+      uploadedAt: new Date()
+    }));
 
     const hr = await HR.findOneAndUpdate(
       { userId: req.user.id },
-      { $push: { images: { $each: imageFiles } } },
+      { $push: { images: { $each: imageObjects } } },
       { new: true, upsert: true }
     );
 
