@@ -100,7 +100,6 @@ exports.updateProfile = async (req, res) => {
   }
 };
 
-// ✅ Add company images (with caption & bio)
 exports.addCompanyImages = async (req, res) => {
   try {
     if (req.user.role !== 'HR') {
@@ -111,11 +110,9 @@ exports.addCompanyImages = async (req, res) => {
       return res.status(400).json({ message: 'No images uploaded' });
     }
 
-    // اقرأ الحقول من الـ body
     const captions = Array.isArray(req.body.captions) ? req.body.captions : [req.body.captions];
     const bios = Array.isArray(req.body.bios) ? req.body.bios : [req.body.bios];
 
-    // جهز الـ objects
     const imageObjects = req.files.map((file, index) => ({
       file: file.filename,
       caption: captions[index] || "",
