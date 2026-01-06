@@ -14,7 +14,7 @@ const hrSchema = new mongoose.Schema({
     required: true
   },
   phone: { type: String, trim: true },
-  position: { type: String, trim: true },
+  position: { type: String, trim: true }, // HR Manager, Recruiter...
   linkedin: { type: String, trim: true },
 
   // Company identity
@@ -25,13 +25,8 @@ const hrSchema = new mongoose.Schema({
   foundedYear: { type: Number },
   size: { type: String, trim: true },
 
-  // ✅ Extra company images with caption/bio
-  images: [{
-    file: { type: String, required: true }, // اسم الصورة أو المسار
-    caption: { type: String, trim: true, maxlength: 200 }, // كابشن قصير
-    bio: { type: String, trim: true, maxlength: 1000 }, // وصف أو تفاصيل أطول
-    uploadedAt: { type: Date, default: Date.now }
-  }],
+  // Extra company images
+  images: [{ type: String }], // ✅ صور إضافية للشركة
 
   // Location & contact
   country: { type: String, trim: true },

@@ -23,11 +23,13 @@ exports.updateProfile = async (req, res) => {
       return res.status(403).json({ message: 'Access denied: HR only' });
     }
 
+    // هات الـ HR الحالي
     const existing = await HR.findOne({ userId: req.user.id });
     if (!existing) {
       return res.status(404).json({ message: 'HR profile not found' });
     }
 
+    // جهز الـ updates من الـ body
     const updates = {
       fullName: req.body.fullName ?? existing.fullName,
       email: req.body.email ?? existing.email,
@@ -85,6 +87,7 @@ exports.updateProfile = async (req, res) => {
       updates.logo = req.file.filename;
     }
 
+    // اعمل التحديث
     const hr = await HR.findOneAndUpdate(
       { userId: req.user.id },
       { $set: updates },
@@ -96,7 +99,7 @@ exports.updateProfile = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
-
+// ✅ Add company images
 exports.addCompanyImages = async (req, res) => {
   try {
     if (req.user.role !== 'HR') {
@@ -107,31 +110,16 @@ exports.addCompanyImages = async (req, res) => {
       return res.status(400).json({ message: 'No images uploaded' });
     }
 
-    // اقرأ الحقول سواء اتبعت كـ captions أو captions[]
-    const rawCaptions = req.body.captions || req.body['captions[]'] || [];
-    const rawBios = req.body.bios || req.body['bios[]'] || [];
-
-    // حوّلهم Arrays دايمًا
-    const captions = Array.isArray(rawCaptions) ? rawCaptions : [rawCaptions];
-    const bios = Array.isArray(rawBios) ? rawBios : [rawBios];
-
-    // جهز الـ objects
-    const imageObjects = req.files.map((file, index) => ({
-      file: file.filename,
-      caption: captions[index] || "",
-      bio: bios[index] || "",
-      uploadedAt: new Date()
-    }));
+    const imageFiles = req.files.map(file => file.filename);
 
     const hr = await HR.findOneAndUpdate(
       { userId: req.user.id },
-      { $push: { images: { $each: imageObjects } } },
-      { new: true }
+      { $push: { images: { $each: imageFiles } } },
+      { new: true, upsert: true }
     );
 
     res.json({ message: 'Company images added successfully', hr });
   } catch (err) {
-    console.error("addCompanyImages error:", err);
     res.status(500).json({ message: 'Internal server error' });
   }
 };
