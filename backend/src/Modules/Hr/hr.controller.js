@@ -97,7 +97,6 @@ exports.updateProfile = async (req, res) => {
   }
 };
 
-// ✅ Add company images (with caption & bio)
 exports.addCompanyImages = async (req, res) => {
   try {
     if (req.user.role !== 'HR') {
@@ -108,22 +107,30 @@ exports.addCompanyImages = async (req, res) => {
       return res.status(400).json({ message: 'No images uploaded' });
     }
 
-    // كل صورة تبقى Object فيه file + caption + bio
+    // Normalize arrays
+    const captions = Array.isArray(req.body['captions[]'])
+      ? req.body['captions[]']
+      : [req.body['captions[]'] || ""];
+    const bios = Array.isArray(req.body['bios[]'])
+      ? req.body['bios[]']
+      : [req.body['bios[]'] || ""];
+
     const imageObjects = req.files.map((file, index) => ({
       file: file.filename,
-      caption: req.body.captions ? req.body.captions[index] : "",
-      bio: req.body.bios ? req.body.bios[index] : "",
+      caption: captions[index] || "",
+      bio: bios[index] || "",
       uploadedAt: new Date()
     }));
 
     const hr = await HR.findOneAndUpdate(
       { userId: req.user.id },
       { $push: { images: { $each: imageObjects } } },
-      { new: true, upsert: true }
+      { new: true }
     );
 
     res.json({ message: 'Company images added successfully', hr });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ message: 'Internal server error' });
   }
 };
