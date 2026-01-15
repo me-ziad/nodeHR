@@ -86,3 +86,41 @@ exports.addCompanyImages = async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 };
+
+// ✅ Update single company image (caption/bio)
+exports.updateCompanyImage = async (req, res) => {
+  try {
+    const { imageId, caption, bio } = req.body;
+
+    const hr = await HR.findOne({ userId: req.user.id });
+    if (!hr) return res.status(404).json({ message: "HR profile not found" });
+
+    const image = hr.images.id(imageId); // Mongoose subdocument
+    if (!image) return res.status(404).json({ message: "Image not found" });
+
+    if (caption !== undefined) image.caption = caption;
+    if (bio !== undefined) image.bio = bio;
+
+    await hr.save();
+    res.json({ message: "Image updated successfully", hr });
+  } catch (err) {
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+// ✅ Delete single company image
+exports.deleteCompanyImage = async (req, res) => {
+  try {
+    const { imageId } = req.params;
+
+    const hr = await HR.findOne({ userId: req.user.id });
+    if (!hr) return res.status(404).json({ message: "HR profile not found" });
+
+    hr.images = hr.images.filter(img => img._id.toString() !== imageId);
+
+    await hr.save();
+    res.json({ message: "Image deleted successfully", hr });
+  } catch (err) {
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
