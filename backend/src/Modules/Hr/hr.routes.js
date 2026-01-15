@@ -11,13 +11,14 @@ const {
   deleteCompanyImage
 } = require('./hr.controller');
 
-router.post('/profile', auth, createProfile); // إنشاء HR جديد
-router.get('/profile', auth, getProfile); // عرض بيانات HR
-router.put('/profile', auth, upload.single('logo'), updateProfile); // تعديل بيانات HR
-router.post('/profile/images', auth, upload.array('images', 10), addCompanyImages);
+// HR Profile CRUD
+router.post('/hr/profile', auth, createProfile);
+router.get('/hr/profile', auth, getProfile);
+router.put('/hr/profile', auth, upload.single('logo'), updateProfile);
 
-// ✅ جديد (خليهم consistent مع الباقي)
-router.put('/profile/images/update', auth, updateCompanyImage);
-router.delete('/profile/images/:imageId', auth, deleteCompanyImage);
+// Company Images
+router.post('/hr/profile/images', auth, upload.array('images', 10), addCompanyImages);
+router.put('/hr/profile/images/update', auth, updateCompanyImage);
+router.delete('/hr/profile/images/:imageId', auth, deleteCompanyImage);
 
 module.exports = router;
