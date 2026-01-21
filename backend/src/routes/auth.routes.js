@@ -220,5 +220,37 @@ router.post('/reset-password', async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 });
+// GET profile by id (public)
+router.get('/profile/:id', async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id).select('-password -email -resetPasswordToken -resetPasswordExpires');
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    res.json({
+      name: user.name,
+      avatar: user.avatar,
+      bio: user.bio,
+      phone: user.phone,
+      address: user.address,
+      position: user.position,
+      cvUrl: user.cvUrl,
+      skills: user.skills,
+      experience: user.experience,
+      education: user.education,
+      projects: user.projects,
+      github: user.github,
+      linkedin: user.linkedin,
+      portfolio: user.portfolio,
+      behance: user.behance,
+      dribbble: user.dribbble,
+      twitter: user.twitter,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
 
 module.exports = router;
