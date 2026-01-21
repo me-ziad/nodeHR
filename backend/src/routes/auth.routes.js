@@ -227,6 +227,7 @@ router.get('/profile/:id', async (req, res) => {
     if (!user) return res.status(404).json({ message: 'User not found' });
 
     res.json({
+      _id: user._id, // 👈 مهم جدا
       name: user.name,
       avatar: user.avatar,
       bio: user.bio,
@@ -252,5 +253,6 @@ router.get('/profile/:id', async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 });
+
 
 module.exports = router;
