@@ -33,6 +33,7 @@ router.get('/profile', auth, async (req, res) => {
     if (!user) return res.status(404).json({ message: 'User not found' });
 
     res.json({
+       _id: user._id,
       name: user.name,
       email: user.email,
       avatar: user.avatar,
