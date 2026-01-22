@@ -52,11 +52,11 @@ exports.updateProfile = async (req, res) => {
 
     // ✅ روابط الشركة الرسمية
     updates.companyLinks = {
-      linkedin: req.body["companyLinks[linkedin]"] || "",
-      twitter: req.body["companyLinks[twitter]"] || "",
-      website: req.body["companyLinks[website]"] || "",
-      glassdoor: req.body["companyLinks[glassdoor]"] || "",
-      careers: req.body["companyLinks[careers]"] || ""
+      linkedin: req.body.companyLinkedin || "",
+      twitter: req.body.companyTwitter || "",
+      website: req.body.companyWebsiteLink || "",
+      glassdoor: req.body.companyGlassdoor || "",
+      careers: req.body.companyCareers || ""
     };
 
     if (req.file) updates.logo = `${BASE_URL}/uploads/${req.file.filename}`;
