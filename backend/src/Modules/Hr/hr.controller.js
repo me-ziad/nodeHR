@@ -1,6 +1,7 @@
 const HR = require('./hr.model');
 const BASE_URL = process.env.BASE_URL || "https://nodehr-production.up.railway.app";
 
+
 // ✅ Create HR Profile
 exports.createProfile = async (req, res) => {
   try {
@@ -73,6 +74,9 @@ exports.updateProfile = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
+
+
 // ✅ Add company images
 exports.addCompanyImages = async (req, res) => {
   try {
