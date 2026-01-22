@@ -1,7 +1,6 @@
 const HR = require('./hr.model');
 const BASE_URL = process.env.BASE_URL || "https://nodehr-production.up.railway.app";
 
-
 // ✅ Create HR Profile
 exports.createProfile = async (req, res) => {
   try {
@@ -18,15 +17,7 @@ exports.createProfile = async (req, res) => {
       phone: req.body.phone,
       position: req.body.position,
       linkedin: req.body.linkedin,
-      logo: `${BASE_URL}/uploads/default-company.png`, // ✅ يرجع لينك للوجو الافتراضي
-      // ✅ روابط الشركة الرسمية
-      companyLinks: {
-        linkedin: req.body.companyLinkedin || "",
-        twitter: req.body.companyTwitter || "",
-        website: req.body.companyWebsiteLink || "",
-        glassdoor: req.body.companyGlassdoor || "",
-        careers: req.body.companyCareers || ""
-      }
+      logo: `${BASE_URL}/uploads/default-company.png` // ✅ يرجع لينك للوجو الافتراضي
     });
 
     await hr.save();
@@ -46,21 +37,12 @@ exports.getProfile = async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 };
+
 // ✅ Update HR Profile
 exports.updateProfile = async (req, res) => {
   try {
     const updates = { ...req.body };
-
-    // ✅ روابط الشركة الرسمية
-    updates.companyLinks = {
-      linkedin: req.body.companyLinkedin || "",
-      twitter: req.body.companyTwitter || "",
-      website: req.body.companyWebsiteLink || "",
-      glassdoor: req.body.companyGlassdoor || "",
-      careers: req.body.companyCareers || ""
-    };
-
-    if (req.file) updates.logo = `${BASE_URL}/uploads/${req.file.filename}`;
+    if (req.file) updates.logo = `${BASE_URL}/uploads/${req.file.filename}`; // ✅ يرجع لينك مباشر للوجو
 
     const hr = await HR.findOneAndUpdate(
       { userId: req.user.id },
@@ -74,8 +56,6 @@ exports.updateProfile = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
-
-
 
 // ✅ Add company images
 exports.addCompanyImages = async (req, res) => {

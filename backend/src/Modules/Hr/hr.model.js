@@ -43,14 +43,6 @@ const hrSchema = new mongoose.Schema({
     careers: { type: String, trim: true },
   },
 
-  // ===== Company Links (رسمية) =====
-  companyLinks: {
-    linkedin: { type: String, trim: true },
-    twitter: { type: String, trim: true },
-    website: { type: String, trim: true },
-    glassdoor: { type: String, trim: true },
-    careers: { type: String, trim: true },
-  }, 
   departments: [{ type: String, trim: true }],
   benefits: [{ type: String, trim: true }],
   values: [{ type: String, trim: true }],
