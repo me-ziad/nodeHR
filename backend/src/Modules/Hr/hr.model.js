@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const hrSchema = new mongoose.Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
 
+  // ===== HR Personal Info =====
   fullName: { type: String, trim: true, required: true },
   email: {
     type: String,
@@ -15,6 +16,7 @@ const hrSchema = new mongoose.Schema({
   position: { type: String, trim: true },
   linkedin: { type: String, trim: true },
 
+  // ===== Company Info =====
   companyName: { type: String, trim: true, required: true },
   logo: { type: String, default: 'default-company.png' },
   companyDescription: { type: String, trim: true, maxlength: 2000 },
@@ -36,6 +38,7 @@ const hrSchema = new mongoose.Schema({
   companyPhone: { type: String, trim: true },
   companyWebsite: { type: String, trim: true },
 
+  // ===== HR Socials (شخصية) =====
   socials: {
     linkedin: { type: String, trim: true },
     twitter: { type: String, trim: true },
@@ -43,6 +46,16 @@ const hrSchema = new mongoose.Schema({
     careers: { type: String, trim: true },
   },
 
+  // ===== Company Links (رسمية) =====
+  companyLinks: {
+    linkedin: { type: String, trim: true },
+    twitter: { type: String, trim: true },
+    website: { type: String, trim: true },
+    glassdoor: { type: String, trim: true },
+    careers: { type: String, trim: true },
+  },
+
+  // ===== Company Culture =====
   departments: [{ type: String, trim: true }],
   benefits: [{ type: String, trim: true }],
   values: [{ type: String, trim: true }],
@@ -52,6 +65,7 @@ const hrSchema = new mongoose.Schema({
     default: 'Hybrid'
   },
 
+  // ===== Hiring Preferences =====
   preferences: {
     jobTypes: [{ type: String, trim: true }],
     seniorityLevels: [{ type: String, trim: true }],

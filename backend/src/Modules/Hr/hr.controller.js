@@ -17,7 +17,15 @@ exports.createProfile = async (req, res) => {
       phone: req.body.phone,
       position: req.body.position,
       linkedin: req.body.linkedin,
-      logo: `${BASE_URL}/uploads/default-company.png` // ✅ يرجع لينك للوجو الافتراضي
+      logo: `${BASE_URL}/uploads/default-company.png`, // ✅ يرجع لينك للوجو الافتراضي
+      // ✅ روابط الشركة الرسمية
+      companyLinks: {
+        linkedin: req.body.companyLinkedin || "",
+        twitter: req.body.companyTwitter || "",
+        website: req.body.companyWebsiteLink || "",
+        glassdoor: req.body.companyGlassdoor || "",
+        careers: req.body.companyCareers || ""
+      }
     });
 
     await hr.save();
@@ -42,6 +50,18 @@ exports.getProfile = async (req, res) => {
 exports.updateProfile = async (req, res) => {
   try {
     const updates = { ...req.body };
+
+    // ✅ روابط الشركة الرسمية
+    if (req.body.companyLinks) {
+      updates.companyLinks = {
+        linkedin: req.body["companyLinks[linkedin]"] || "",
+        twitter: req.body["companyLinks[twitter]"] || "",
+        website: req.body["companyLinks[website]"] || "",
+        glassdoor: req.body["companyLinks[glassdoor]"] || "",
+        careers: req.body["companyLinks[careers]"] || ""
+      };
+    }
+
     if (req.file) updates.logo = `${BASE_URL}/uploads/${req.file.filename}`; // ✅ يرجع لينك مباشر للوجو
 
     const hr = await HR.findOneAndUpdate(
