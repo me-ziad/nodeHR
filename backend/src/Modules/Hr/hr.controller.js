@@ -45,24 +45,21 @@ exports.getProfile = async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 };
-
 // ✅ Update HR Profile
 exports.updateProfile = async (req, res) => {
   try {
     const updates = { ...req.body };
 
     // ✅ روابط الشركة الرسمية
-    if (req.body.companyLinks) {
-      updates.companyLinks = {
-        linkedin: req.body["companyLinks[linkedin]"] || "",
-        twitter: req.body["companyLinks[twitter]"] || "",
-        website: req.body["companyLinks[website]"] || "",
-        glassdoor: req.body["companyLinks[glassdoor]"] || "",
-        careers: req.body["companyLinks[careers]"] || ""
-      };
-    }
+    updates.companyLinks = {
+      linkedin: req.body["companyLinks[linkedin]"] || "",
+      twitter: req.body["companyLinks[twitter]"] || "",
+      website: req.body["companyLinks[website]"] || "",
+      glassdoor: req.body["companyLinks[glassdoor]"] || "",
+      careers: req.body["companyLinks[careers]"] || ""
+    };
 
-    if (req.file) updates.logo = `${BASE_URL}/uploads/${req.file.filename}`; // ✅ يرجع لينك مباشر للوجو
+    if (req.file) updates.logo = `${BASE_URL}/uploads/${req.file.filename}`;
 
     const hr = await HR.findOneAndUpdate(
       { userId: req.user.id },
@@ -76,7 +73,6 @@ exports.updateProfile = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
-
 // ✅ Add company images
 exports.addCompanyImages = async (req, res) => {
   try {
