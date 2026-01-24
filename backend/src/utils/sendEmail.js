@@ -5,7 +5,7 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 async function sendEmail(to, subject, html) {
   try {
     await resend.emails.send({
-      from: process.env.EMAIL_USER || 'onboarding@resend.dev', // لازم يكون verified أو الافتراضي
+      from: process.env.EMAIL_USER || 'onboarding@resend.dev', 
       to,
       subject,
       html,

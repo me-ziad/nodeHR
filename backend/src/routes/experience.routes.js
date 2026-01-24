@@ -1,11 +1,10 @@
 const express = require('express');
 const auth = require('../middleware/auth.middleware');
-const allowRoles = require('../middleware/roles'); // ✅ Middleware للتحكم في الصلاحيات
+const allowRoles = require('../middleware/roles');
 const User = require('../Model/user.model');
 
 const router = express.Router();
 
-// ✅ عرض كل الـ experience (خاص بالـ Seeker فقط)
 router.get('/', auth, allowRoles('SEEKER'), async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select('experience');
@@ -16,7 +15,6 @@ router.get('/', auth, allowRoles('SEEKER'), async (req, res) => {
   }
 });
 
-// ✅ إضافة تجربة جديدة (خاص بالـ Seeker فقط)
 router.post('/', auth, allowRoles('SEEKER'), async (req, res) => {
   try {
     const { company, position, startDate, endDate, description } = req.body;
@@ -34,7 +32,6 @@ router.post('/', auth, allowRoles('SEEKER'), async (req, res) => {
   }
 });
 
-// ✅ تعديل تجربة موجودة (خاص بالـ Seeker فقط)
 router.put('/:expId', auth, allowRoles('SEEKER'), async (req, res) => {
   try {
     const { expId } = req.params;
@@ -44,7 +41,7 @@ router.put('/:expId', auth, allowRoles('SEEKER'), async (req, res) => {
     const exp = user.experience.id(expId);
     if (!exp) return res.status(404).json({ message: 'Experience not found' });
 
-    Object.assign(exp, updates); // تعديل الحقول اللي جت في الـ body
+    Object.assign(exp, updates); 
     await user.save();
 
     res.json({ message: 'Experience updated successfully', experience: user.experience });
@@ -53,7 +50,6 @@ router.put('/:expId', auth, allowRoles('SEEKER'), async (req, res) => {
   }
 });
 
-// ✅ حذف تجربة معينة (خاص بالـ Seeker فقط)
 router.delete('/:expId', auth, allowRoles('SEEKER'), async (req, res) => {
   try {
     const { expId } = req.params;

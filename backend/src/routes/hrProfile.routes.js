@@ -1,12 +1,11 @@
 const express = require('express');
 const auth = require('../middleware/auth.middleware');
 const allowRoles = require('../middleware/roles');
-const upload = require('../middleware/upload'); // ✅ لإدارة form-data
+const upload = require('../middleware/upload'); 
 const User = require('../Model/user.model');
 
 const router = express.Router();
 
-// ✅ عرض بروفايل الـ HR
 router.get('/me', auth, allowRoles('HR'), async (req, res) => {
   try {
     const hr = await User.findById(req.user.id).select(
@@ -20,7 +19,6 @@ router.get('/me', auth, allowRoles('HR'), async (req, res) => {
   }
 });
 
-// ✅ تعديل بروفايل الـ HR باستخدام form-data
 router.put('/me', auth, allowRoles('HR'), upload.single('avatar'), async (req, res) => {
   try {
     const updates = {
@@ -38,7 +36,6 @@ router.put('/me', auth, allowRoles('HR'), upload.single('avatar'), async (req, r
       applicationsReceived: req.body.applicationsReceived
     };
 
-    // لو فيه صورة جديدة
     if (req.file) {
       updates.avatar = `/uploads/${req.file.filename}`;
     }

@@ -8,23 +8,20 @@ async function login(req, res) {
   try {
     const { email, password } = req.body;
 
-    // تأكد إن المستخدم موجود
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(400).json({ message: 'User not found' });
     }
 
-    // قارن الباسورد
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(400).json({ message: 'Invalid credentials' });
     }
 
-    // اعمل token
     const token = jwt.sign(
       { id: user._id, role: user.role },
       process.env.JWT_SECRET,
-      { expiresIn: '60m' }
+      { expiresIn: '60d' }
     );
 
     res.json({
@@ -55,7 +52,6 @@ async function register(req, res) {
     const { email, password, role, name, phone, address, company, position, bio } = req.body;
     const avatar = req.file ? `/uploads/avatars/${req.file.filename}` : 'default.png';
 
-    // تحقق من الحقول الأساسية المطلوبة
     if (!email) return res.status(400).json({ message: 'Email is required' });
     if (!password) return res.status(400).json({ message: 'Password is required' });
     if (!role) return res.status(400).json({ message: 'Role is required (HR or SEEKER)' });
@@ -95,7 +91,7 @@ async function register(req, res) {
       throw err;
     }
 
-    const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '15m' });
+    const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '60d' });
 
     res.status(201).json({
       user: {

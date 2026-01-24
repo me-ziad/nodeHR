@@ -9,13 +9,10 @@ const sendEmail = require('../utils/sendEmail');
 
 const router = express.Router();
 
-// تسجيل مستخدم جديد
 router.post('/register', upload.single('avatar'), register);
 
-// تسجيل دخول
 router.post('/login', login);
 
-// بيانات المستخدم الحالي (مختصرة)
 router.get('/me', auth, async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select('-password');
@@ -26,7 +23,6 @@ router.get('/me', auth, async (req, res) => {
   }
 });
 
-// ✅ بيانات البروفايل (تفصيلية) — مع المشاريع والروابط
 router.get('/profile', auth, async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select('-password');
@@ -48,7 +44,6 @@ router.get('/profile', auth, async (req, res) => {
       experience: user.experience,
       education: user.education,
       projects: user.projects,
-      // ✅ روابط شخصية
       github: user.github,
       linkedin: user.linkedin,
       portfolio: user.portfolio,
@@ -64,7 +59,6 @@ router.get('/profile', auth, async (req, res) => {
 });
 
 
-// ✍️ تحديث بيانات البروفايل (skills + experience + education + الروابط)
 router.put('/profile', auth, upload.single('avatar'), async (req, res) => {
   try {
     const updates = {
@@ -73,7 +67,6 @@ router.put('/profile', auth, upload.single('avatar'), async (req, res) => {
       phone: req.body.phone,
       address: req.body.address,
       position: req.body.position,
-      // ✅ روابط شخصية
       github: req.body.github,
       linkedin: req.body.linkedin,
       portfolio: req.body.portfolio,
@@ -82,7 +75,6 @@ router.put('/profile', auth, upload.single('avatar'), async (req, res) => {
       twitter: req.body.twitter
     };
 
-    // ✅ skills
     if (req.body.skills) {
       if (typeof req.body.skills === 'string') {
         updates.skills = req.body.skills.split(',').map(s => s.trim()).filter(Boolean);
@@ -91,7 +83,6 @@ router.put('/profile', auth, upload.single('avatar'), async (req, res) => {
       }
     }
 
-    // ✅ experience
     if (req.body.experience) {
       try {
         updates.experience = typeof req.body.experience === 'string'
@@ -102,7 +93,6 @@ router.put('/profile', auth, upload.single('avatar'), async (req, res) => {
       }
     }
 
-    // ✅ education
     if (req.body.education) {
       try {
         updates.education = typeof req.body.education === 'string'
@@ -113,7 +103,6 @@ router.put('/profile', auth, upload.single('avatar'), async (req, res) => {
       }
     }
 
-    // صورة جديدة
     if (req.file) {
       updates.avatar = req.file.filename;
     }
@@ -132,7 +121,6 @@ router.put('/profile', auth, upload.single('avatar'), async (req, res) => {
   }
 });
 
-// ✅ رفع CV
 router.put('/upload-cv', auth, upload.single('cv'), async (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ message: 'No file uploaded' });
@@ -154,7 +142,6 @@ router.put('/upload-cv', auth, upload.single('cv'), async (req, res) => {
   }
 });
 
-// نسيت الباسورد - إرسال كود OTP
 router.post('/forgot-password', async (req, res) => {
   try {
     const { email } = req.body;
@@ -183,7 +170,6 @@ router.post('/forgot-password', async (req, res) => {
 }
 });
 
-// التحقق من الكود
 router.post('/verify-reset-code', async (req, res) => {
   try {
     const { code } = req.body;
@@ -203,7 +189,6 @@ router.post('/verify-reset-code', async (req, res) => {
   }
 });
 
-// تغيير الباسورد
 router.post('/reset-password', async (req, res) => {
   try {
     const { newPassword } = req.body;
@@ -222,14 +207,13 @@ router.post('/reset-password', async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 });
-// GET profile by id (public)
 router.get('/profile/:id', async (req, res) => {
   try {
     const user = await User.findById(req.params.id).select('-password -email -resetPasswordToken -resetPasswordExpires');
     if (!user) return res.status(404).json({ message: 'User not found' });
 
     res.json({
-      _id: user._id, // 👈 مهم جدا
+      _id: user._id,
       name: user.name,
       avatar: user.avatar,
       bio: user.bio,

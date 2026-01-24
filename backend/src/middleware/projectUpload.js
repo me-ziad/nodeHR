@@ -5,7 +5,7 @@ const path = require('path');
 // Storage خاص بالمشاريع
 const projectStorage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, path.join(__dirname, '../../../uploads/projects')); // فولدر خاص بالمشاريع
+    cb(null, path.join(__dirname, '../../../uploads/projects')); 
   },
   filename: (req, file, cb) => {
     cb(null, Date.now() + path.extname(file.originalname));

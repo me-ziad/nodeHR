@@ -1,7 +1,7 @@
 const HR = require('./hr.model');
 const BASE_URL = process.env.BASE_URL || "https://nodehr-production.up.railway.app";
 
-// ✅ Create HR Profile
+//  Create HR Profile
 exports.createProfile = async (req, res) => {
   try {
     const existing = await HR.findOne({ userId: req.user.id });
@@ -17,7 +17,7 @@ exports.createProfile = async (req, res) => {
       phone: req.body.phone,
       position: req.body.position,
       linkedin: req.body.linkedin,
-      logo: `${BASE_URL}/uploads/default-company.png` // ✅ يرجع لينك للوجو الافتراضي
+      logo: `${BASE_URL}/uploads/default-company.png` 
     });
 
     await hr.save();
@@ -27,7 +27,7 @@ exports.createProfile = async (req, res) => {
   }
 };
 
-// ✅ Get HR Profile
+//  Get HR Profile
 exports.getProfile = async (req, res) => {
   try {
     const hr = await HR.findOne({ userId: req.user.id });
@@ -38,11 +38,11 @@ exports.getProfile = async (req, res) => {
   }
 };
 
-// ✅ Update HR Profile
+//  Update HR Profile
 exports.updateProfile = async (req, res) => {
   try {
     const updates = { ...req.body };
-    if (req.file) updates.logo = `${BASE_URL}/uploads/${req.file.filename}`; // ✅ يرجع لينك مباشر للوجو
+    if (req.file) updates.logo = `${BASE_URL}/uploads/${req.file.filename}`; 
 
     const hr = await HR.findOneAndUpdate(
       { userId: req.user.id },
@@ -57,7 +57,7 @@ exports.updateProfile = async (req, res) => {
   }
 };
 
-// ✅ Add company images
+//  Add company images
 exports.addCompanyImages = async (req, res) => {
   try {
     if (!req.files || req.files.length === 0) {
@@ -68,7 +68,7 @@ exports.addCompanyImages = async (req, res) => {
     const bios = Array.isArray(req.body.bios) ? req.body.bios : [req.body.bios];
 
     const imageObjects = req.files.map((file, index) => ({
-      file: `${BASE_URL}/uploads/${file.filename}`, // ✅ يرجع لينك مباشر للصورة
+      file: `${BASE_URL}/uploads/${file.filename}`, //  يرجع لينك مباشر للصورة
       caption: captions[index] || "",
       bio: bios[index] || "",
       uploadedAt: new Date()
@@ -87,7 +87,7 @@ exports.addCompanyImages = async (req, res) => {
   }
 };
 
-// ✅ Update single company image (caption/bio)
+//  Update single company image (caption/bio)
 exports.updateCompanyImage = async (req, res) => {
   try {
     const { imageId, caption, bio } = req.body;
@@ -108,7 +108,7 @@ exports.updateCompanyImage = async (req, res) => {
   }
 };
 
-// ✅ Delete single company image
+//  Delete single company image
 exports.deleteCompanyImage = async (req, res) => {
   try {
     const { imageId } = req.params;

@@ -1,11 +1,10 @@
 const express = require('express');
 const auth = require('../middleware/auth.middleware');
-const allowRoles = require('../middleware/roles'); // ✅ middleware للتحكم في الصلاحيات
+const allowRoles = require('../middleware/roles'); 
 const User = require('../Model/user.model');
 
 const router = express.Router();
 
-// ✅ عرض كل الـ education (خاص بالـ Seeker فقط)
 router.get('/', auth, allowRoles('SEEKER'), async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select('education');
@@ -16,7 +15,6 @@ router.get('/', auth, allowRoles('SEEKER'), async (req, res) => {
   }
 });
 
-// ✅ إضافة تعليم جديد (خاص بالـ Seeker فقط)
 router.post('/', auth, allowRoles('SEEKER'), async (req, res) => {
   try {
     const { school, degree, fieldOfStudy, startDate, endDate, description } = req.body;
@@ -34,7 +32,6 @@ router.post('/', auth, allowRoles('SEEKER'), async (req, res) => {
   }
 });
 
-// ✅ تعديل تعليم موجود (خاص بالـ Seeker فقط)
 router.put('/:eduId', auth, allowRoles('SEEKER'), async (req, res) => {
   try {
     const { eduId } = req.params;
@@ -53,7 +50,6 @@ router.put('/:eduId', auth, allowRoles('SEEKER'), async (req, res) => {
   }
 });
 
-// ✅ حذف تعليم معين (خاص بالـ Seeker فقط)
 router.delete('/:eduId', auth, allowRoles('SEEKER'), async (req, res) => {
   try {
     const { eduId } = req.params;

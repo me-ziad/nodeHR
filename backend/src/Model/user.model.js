@@ -37,7 +37,7 @@ const userSchema = new mongoose.Schema({
   bio: { type: String, maxlength: [500, 'Bio cannot exceed 500 characters'] },
   avatar: { type: String, default: 'default.png' },
 
-  // ✅ روابط شخصية للـ SEEKER
+  // SEEKER
   github: { type: String, trim: true },
   linkedin: { type: String, trim: true },
   portfolio: { type: String, trim: true },
@@ -45,7 +45,7 @@ const userSchema = new mongoose.Schema({
   dribbble: { type: String, trim: true },
   twitter: { type: String, trim: true },
 
-  // ✅ حقول خاصة بالـ HR
+  //  HR
   companyName: { type: String, trim: true },
   companyWebsite: { type: String, trim: true },
   companyDescription: { type: String, trim: true },
@@ -53,12 +53,12 @@ const userSchema = new mongoose.Schema({
   foundedYear: { type: Number },
   size: { type: String, trim: true },
 
-  // ✅ نشاط التوظيف للـ HR
+  //  HR
   jobsPosted: { type: Number, default: 0 },
   activeJobs: { type: Number, default: 0 },
   applicationsReceived: { type: Number, default: 0 },
 
-  // ✅ حقول خاصة بالـ SEEKER
+  //  SEEKER
   cv: { type: String, default: null },
   cvUrl: { type: String, default: null },
   skills: [{ type: String, trim: true }],

@@ -1,6 +1,6 @@
 const express = require('express');
 const auth = require('../middleware/auth.middleware');
-const allowRoles = require('../middleware/roles'); // ✅ Middleware للتحكم في الصلاحيات
+const allowRoles = require('../middleware/roles'); 
 const upload = require('../middleware/upload');
 const User = require('../Model/user.model');
 const uploadProjectImages = require('../middleware/projectUpload');
@@ -8,7 +8,6 @@ const uploadProjectImages = require('../middleware/projectUpload');
 
 const router = express.Router();
 
-// ✅ عرض كل المشاريع (خاص بالـ Seeker فقط)
 router.get('/', auth, allowRoles('SEEKER'), async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select('projects');
@@ -19,7 +18,6 @@ router.get('/', auth, allowRoles('SEEKER'), async (req, res) => {
   }
 });
 
-// ✅ إضافة مشروع جديد مع صور من form-data (خاص بالـ Seeker فقط)
 router.post('/', auth, allowRoles('SEEKER'), upload.array('images', 5), async (req, res) => {
   try {
     const user = await User.findById(req.user.id);
@@ -27,7 +25,6 @@ router.post('/', auth, allowRoles('SEEKER'), upload.array('images', 5), async (r
 
     const { title, description, link, year, technologies } = req.body;
 
-    // تجهيز التقنيات (ممكن تيجي comma-separated أو JSON string)
     let tech = [];
     if (technologies) {
       tech = Array.isArray(technologies)
@@ -37,10 +34,8 @@ router.post('/', auth, allowRoles('SEEKER'), upload.array('images', 5), async (r
             : technologies.split(',').map(t => t.trim()).filter(Boolean));
     }
 
-    // تجهيز الصور اللي اتبعتت
     const imagePaths = (req.files || []).map(f => `/uploads/${f.filename}`);
 
-    // بناء المشروع الجديد
     const newProject = {
       title,
       description,
@@ -60,7 +55,6 @@ router.post('/', auth, allowRoles('SEEKER'), upload.array('images', 5), async (r
   }
 });
 
-// ✅ تعديل مشروع (خاص بالـ Seeker فقط)
 router.put('/:projectId', auth, allowRoles('SEEKER'), async (req, res) => {
   try {
     const { projectId } = req.params;
@@ -81,7 +75,6 @@ router.put('/:projectId', auth, allowRoles('SEEKER'), async (req, res) => {
   }
 });
 
-// ✅ حذف مشروع (خاص بالـ Seeker فقط)
 router.delete('/:projectId', auth, allowRoles('SEEKER'), async (req, res) => {
   try {
     const { projectId } = req.params;
@@ -102,7 +95,6 @@ router.delete('/:projectId', auth, allowRoles('SEEKER'), async (req, res) => {
   }
 });
 
-// ✅ رفع صور لمشروع معيّن (خاص بالـ Seeker فقط)
 router.put('/:projectId/upload-images', auth, allowRoles('SEEKER'), upload.array('images', 5), async (req, res) => {
   try {
     if (!req.files || req.files.length === 0) {
@@ -128,7 +120,6 @@ router.put('/:projectId/upload-images', auth, allowRoles('SEEKER'), upload.array
   }
 });
 
-// ✅ حذف صورة واحدة من مشروع (خاص بالـ Seeker فقط)
 router.delete('/:projectId/delete-image', auth, allowRoles('SEEKER'), async (req, res) => {
   try {
     const { projectId } = req.params;
@@ -159,7 +150,6 @@ router.delete('/:projectId/delete-image', auth, allowRoles('SEEKER'), async (req
     res.status(500).json({ message: 'Internal server error' });
   }
 });
-// رفع صور لمشروع معين
 router.put('/:projectId/upload-images', auth, allowRoles('SEEKER'), uploadProjectImages.array('images', 5), async (req, res) => {
   try {
     const { projectId } = req.params;
