@@ -1,5 +1,5 @@
 const HR = require('./hr.model');
-const BASE_URL = process.env.BASE_URL || "https://nodehr-production.up.railway.app";
+const BASE_URL = process.env.BASE_URL || "https://node-hr.vercel.app";
 
 //  Create HR Profile
 exports.createProfile = async (req, res) => {
