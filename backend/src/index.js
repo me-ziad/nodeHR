@@ -1,4 +1,3 @@
-// backend/src/server.js
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
@@ -11,11 +10,12 @@ const experienceRoutes = require('./routes/experience.routes');
 const educationRoutes = require('./routes/education.routes');
 const hrProfileRoutes = require('./routes/hrProfile.routes'); 
 const hrRoutes = require('./Modules/Hr/hr.routes');
+
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-
+// Routes
 app.use('/auth', authRouter);
 app.use('/uploads', express.static(path.join(__dirname, '../../uploads/avatars')));
 app.use('/uploads/projects', express.static(path.join(__dirname, '../uploads/projects')));
@@ -24,22 +24,16 @@ app.use('/auth/skills', skillsRoutes);
 app.use('/auth/experience', experienceRoutes);
 app.use('/auth/education', educationRoutes);
 app.use('/hr/profile', hrProfileRoutes);
-app.use('/hr', hrRoutes)
+app.use('/hr', hrRoutes);
 
 app.get('/health', (req, res) => {
   res.json({ ok: true, status: 'Server is healthy 🚀' });
 });
 
-const port = process.env.PORT || 4000;
+// بدل ما تعمل listen هنا، صدّر الـ app
+// Vercel هيشغل الملف كـ Serverless Function
+connectDB(process.env.MONGO_URI)
+  .then(() => console.log("✅ Database connected"))
+  .catch((err) => console.error("❌ DB connection failed:", err));
 
-async function start() {
-  try {
-    await connectDB(process.env.MONGO_URI);
-    app.listen(port, () => console.log(` Server running on port ${port}`));
-  } catch (err) {
-    console.error(' Failed to start server:', err);
-    process.exit(1);
-  }
-}
-
-start();
+module.exports = app;

@@ -2,15 +2,10 @@
   "name": "api2",
   "version": "1.0.0",
   "description": "User profile and authentication backend",
-  "main": "backend/src/index.js",
+  "main": "index.js",
   "scripts": {
-    "start": "node backend/src/index.js",
     "dev": "nodemon backend/src/index.js"
   },
-  "keywords": [],
-  "author": "Ziad",
-  "license": "ISC",
-  "type": "commonjs",
   "dependencies": {
     "bcrypt": "^6.0.0",
     "cors": "^2.8.5",
@@ -26,3 +21,5 @@
     "nodemon": "^3.1.0"
   }
 }
+
+
