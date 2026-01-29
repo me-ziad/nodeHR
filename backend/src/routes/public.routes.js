@@ -1,8 +1,10 @@
+// routes/public.routes.js
 const express = require("express");
 const User = require("../Model/user.model");
 
 const router = express.Router();
 
+// Public profile by ID
 router.get("/profile/:id", async (req, res) => {
   try {
     const user = await User.findById(req.params.id).select(
