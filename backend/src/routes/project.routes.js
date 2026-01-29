@@ -7,7 +7,7 @@ const uploadProjectImages = require("../middleware/projectUpload");
 const router = express.Router();
 
 // Get all projects
-router.get("/", allowRoles("SEEKER"), async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select("projects");
     if (!user) return res.status(404).json({ message: "User not found" });
