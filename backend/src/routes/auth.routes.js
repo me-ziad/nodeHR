@@ -2,17 +2,29 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
 const { register, login } = require('../Controllers/auth.controller');
-const upload = require('../middleware/upload');
+const upload = require('../middleware/upload'); // ده بقى Cloudinary upload
 const auth = require('../middleware/auth.middleware');
 const User = require('../Model/user.model');
 const sendEmail = require('../utils/sendEmail');
 
 const router = express.Router();
 
-router.post('/register', upload.single('avatar'), register);
+// Register مع رفع avatar
+router.post('/register', upload.single('avatar'), async (req, res, next) => {
+  try {
+    if (req.file) {
+      req.body.avatar = req.file.path; // Cloudinary URL
+    }
+    next();
+  } catch (err) {
+    res.status(500).json({ message: 'Avatar upload failed' });
+  }
+}, register);
 
+// Login
 router.post('/login', login);
 
+// Get current user
 router.get('/me', auth, async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select('-password');
@@ -23,23 +35,23 @@ router.get('/me', auth, async (req, res) => {
   }
 });
 
+// Get profile
 router.get('/profile', auth, async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select('-password');
     if (!user) return res.status(404).json({ message: 'User not found' });
 
     res.json({
-
       id: user._id.toString(),
       name: user.name,
       email: user.email,
-      avatar: user.avatar,
+      avatar: user.avatar, // Cloudinary URL
       bio: user.bio,
       phone: user.phone,
       address: user.address,
       position: user.position,
       cv: user.cv,
-      cvUrl: user.cvUrl,
+      cvUrl: user.cvUrl, // Cloudinary URL
       skills: user.skills,
       experience: user.experience,
       education: user.education,
@@ -58,7 +70,7 @@ router.get('/profile', auth, async (req, res) => {
   }
 });
 
-
+// Update profile مع رفع avatar
 router.put('/profile', auth, upload.single('avatar'), async (req, res) => {
   try {
     const updates = {
@@ -104,7 +116,7 @@ router.put('/profile', auth, upload.single('avatar'), async (req, res) => {
     }
 
     if (req.file) {
-      updates.avatar = req.file.filename;
+      updates.avatar = req.file.path; // Cloudinary URL
     }
 
     const user = await User.findByIdAndUpdate(
@@ -121,16 +133,16 @@ router.put('/profile', auth, upload.single('avatar'), async (req, res) => {
   }
 });
 
+// Upload CV على Cloudinary
 router.put('/upload-cv', auth, upload.single('cv'), async (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ message: 'No file uploaded' });
 
-    const fileName = req.file.filename;
-    const publicUrl = `/uploads/${fileName}`;
+    const fileUrl = req.file.path; // Cloudinary URL
 
     const user = await User.findByIdAndUpdate(
       req.user.id,
-      { $set: { cv: fileName, cvUrl: publicUrl } },
+      { $set: { cv: fileUrl, cvUrl: fileUrl } },
       { new: true }
     ).select('-password');
 
@@ -142,6 +154,7 @@ router.put('/upload-cv', auth, upload.single('cv'), async (req, res) => {
   }
 });
 
+// Forgot password
 router.post('/forgot-password', async (req, res) => {
   try {
     const { email } = req.body;
@@ -164,12 +177,13 @@ router.post('/forgot-password', async (req, res) => {
     await sendEmail(email, 'Password Reset Code', html);
 
     res.json({ message: 'Reset code sent to email.' });
- } catch (err) {
-  console.error("Forgot password error:", err); // ✅ يطبع الخطأ في الـ logs
-  res.status(500).json({ message: err.message || 'Internal server error' });
-}
+  } catch (err) {
+    console.error("Forgot password error:", err);
+    res.status(500).json({ message: err.message || 'Internal server error' });
+  }
 });
 
+// Verify reset code
 router.post('/verify-reset-code', async (req, res) => {
   try {
     const { code } = req.body;
@@ -189,6 +203,7 @@ router.post('/verify-reset-code', async (req, res) => {
   }
 });
 
+// Reset password
 router.post('/reset-password', async (req, res) => {
   try {
     const { newPassword } = req.body;
@@ -207,6 +222,8 @@ router.post('/reset-password', async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 });
+
+// Public profile by id
 router.get('/profile/:id', async (req, res) => {
   try {
     const user = await User.findById(req.params.id).select('-password -email -resetPasswordToken -resetPasswordExpires');
@@ -215,12 +232,12 @@ router.get('/profile/:id', async (req, res) => {
     res.json({
       _id: user._id,
       name: user.name,
-      avatar: user.avatar,
+      avatar: user.avatar, // Cloudinary URL
       bio: user.bio,
       phone: user.phone,
       address: user.address,
       position: user.position,
-      cvUrl: user.cvUrl,
+      cvUrl: user.cvUrl, // Cloudinary URL
       skills: user.skills,
       experience: user.experience,
       education: user.education,
@@ -239,6 +256,5 @@ router.get('/profile/:id', async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 });
-
 
 module.exports = router;
