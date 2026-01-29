@@ -18,7 +18,7 @@ router.get("/profile/:id", async (req, res) => {
   }
 });
 
-// **Public projects by user ID**
+// Public projects by user ID
 router.get("/projects/:id", async (req, res) => {
   try {
     const user = await User.findById(req.params.id).select("projects");
@@ -29,5 +29,3 @@ router.get("/projects/:id", async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 });
-
-module.exports = router;
