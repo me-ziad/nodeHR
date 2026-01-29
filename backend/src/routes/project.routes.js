@@ -7,7 +7,7 @@ const uploadProjectImages = require("../middleware/projectUpload");
 const router = express.Router();
 
 // Get all projects
-router.get("/", async (req, res) => {
+router.get("/", auth, allowRoles("SEEKER"), async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select("projects");
     if (!user) return res.status(404).json({ message: "User not found" });
@@ -18,7 +18,7 @@ router.get("/", async (req, res) => {
 });
 
 // Add new project + upload images
-router.post("/", allowRoles("SEEKER"), uploadProjectImages.array("images", 5), async (req, res) => {
+router.post("/", auth, allowRoles("SEEKER"), uploadProjectImages.array("images", 5), async (req, res) => {
   try {
     const user = await User.findById(req.user.id);
     if (!user) return res.status(404).json({ message: "User not found" });
