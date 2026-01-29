@@ -25,6 +25,8 @@ const cvStorage = new CloudinaryStorage({
     folder: "cvs",
     allowed_formats: ["pdf", "doc", "docx"],
     public_id: () => `cv_${Date.now()}`,
+    resource_type: "raw",   // مهم عشان يقبل ملفات غير الصور
+    type: "upload",         // يخلي الملف public
   },
 });
 
