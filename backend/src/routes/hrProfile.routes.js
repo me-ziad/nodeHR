@@ -19,7 +19,7 @@ router.get('/me', auth, allowRoles('HR'), async (req, res) => {
   }
 });
 
-router.put('/me', auth, allowRoles('HR'), upload.single('avatar'), async (req, res) => {
+router.put('/me', auth, allowRoles('HR'), upload.uploadAvatar.single('avatar'), async (req, res) => {
   try {
     const updates = {
       name: req.body.name,

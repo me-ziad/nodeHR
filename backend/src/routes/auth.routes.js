@@ -148,7 +148,7 @@ router.put('/upload-cv', auth, uploadCv.single('cv'), async (req, res) => {
 
     if (!user) return res.status(404).json({ message: 'User not found' });
 
-    res.json({ message: 'CV uploaded successfully', cv: user.cv, cvUrl: user.cvUrl });
+    res.json({ message: 'CV uploaded successfully', user });
   } catch (err) {
     console.error("Upload CV error:", err);
     res.status(500).json({ message: 'Internal server error' });
