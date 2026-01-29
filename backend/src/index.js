@@ -10,7 +10,7 @@ const experienceRoutes = require('./routes/experience.routes');
 const educationRoutes = require('./routes/education.routes');
 const hrProfileRoutes = require('./routes/hrProfile.routes'); 
 const hrRoutes = require('./Modules/Hr/hr.routes');
-
+const publicRoutes = require("./routes/public.routes");
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -25,6 +25,7 @@ app.use('/auth/experience', experienceRoutes);
 app.use('/auth/education', educationRoutes);
 app.use('/hr/profile', hrProfileRoutes);
 app.use('/hr', hrRoutes);
+app.use("/public", publicRoutes);
 
 app.get('/health', (req, res) => {
   res.json({ ok: true, status: 'Server is healthy 🚀' });
