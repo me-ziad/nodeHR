@@ -16,15 +16,17 @@ router.get("/profile/:id", async (req, res) => {
   }
 });
 
-// Public projects
-router.get("/projects/:id", async (req, res) => {
+// GET /public/projects/:userId
+router.get("/public/projects/:id", async (req, res) => {
   try {
     const user = await User.findById(req.params.id).select("projects");
     if (!user) return res.status(404).json({ message: "User not found" });
+
     res.json(user.projects || []);
   } catch (err) {
     res.status(500).json({ message: "Internal server error" });
   }
 });
+
 
 module.exports = router;
