@@ -2,7 +2,7 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
 const { register, login } = require('../Controllers/auth.controller');
-const upload = require('../middleware/upload'); // ده بقى Cloudinary upload
+const { uploadAvatar, uploadCv } = require('../middleware/upload'); // استدعاء الاتنين
 const auth = require('../middleware/auth.middleware');
 const User = require('../Model/user.model');
 const sendEmail = require('../utils/sendEmail');
@@ -10,7 +10,7 @@ const sendEmail = require('../utils/sendEmail');
 const router = express.Router();
 
 // Register مع رفع avatar
-router.post('/register', upload.single('avatar'), async (req, res, next) => {
+router.post('/register', uploadAvatar.single('avatar'), async (req, res, next) => {
   try {
     if (req.file) {
       req.body.avatar = req.file.path; // Cloudinary URL
@@ -71,7 +71,7 @@ router.get('/profile', auth, async (req, res) => {
 });
 
 // Update profile مع رفع avatar
-router.put('/profile', auth, upload.single('avatar'), async (req, res) => {
+router.put('/profile', auth, uploadAvatar.single('avatar'), async (req, res) => {
   try {
     const updates = {
       name: req.body.name,
@@ -134,7 +134,7 @@ router.put('/profile', auth, upload.single('avatar'), async (req, res) => {
 });
 
 // Upload CV على Cloudinary
-router.put('/upload-cv', auth, upload.single('cv'), async (req, res) => {
+router.put('/upload-cv', auth, uploadCv.single('cv'), async (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ message: 'No file uploaded' });
 
@@ -150,6 +150,7 @@ router.put('/upload-cv', auth, upload.single('cv'), async (req, res) => {
 
     res.json({ message: 'CV uploaded successfully', cv: user.cv, cvUrl: user.cvUrl });
   } catch (err) {
+    console.error("Upload CV error:", err);
     res.status(500).json({ message: 'Internal server error' });
   }
 });
