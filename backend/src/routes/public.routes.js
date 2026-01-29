@@ -3,7 +3,7 @@ const User = require("../Model/user.model");
 
 const router = express.Router();
 
-// Public profile by ID
+// Public profile
 router.get("/profile/:id", async (req, res) => {
   try {
     const user = await User.findById(req.params.id).select(
@@ -18,7 +18,7 @@ router.get("/profile/:id", async (req, res) => {
   }
 });
 
-// Public projects by user ID
+// Public projects
 router.get("/projects/:id", async (req, res) => {
   try {
     const user = await User.findById(req.params.id).select("projects");
@@ -29,3 +29,5 @@ router.get("/projects/:id", async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 });
+
+module.exports = router; // ✅ لازم module.exports = router

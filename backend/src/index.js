@@ -25,7 +25,7 @@ app.use('/auth/experience', experienceRoutes);
 app.use('/auth/education', educationRoutes);
 app.use('/hr/profile', hrProfileRoutes);
 app.use('/hr', hrRoutes);
-app.use("/public", require("./routes/public.routes"));
+app.use("/public", publicRoutes);
 
 app.get('/health', (req, res) => {
   res.json({ ok: true, status: 'Server is healthy 🚀' });
