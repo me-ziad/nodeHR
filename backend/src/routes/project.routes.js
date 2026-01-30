@@ -153,4 +153,18 @@ router.delete("/:projectId/delete-image", auth, allowRoles("SEEKER"), async (req
   }
 });
 
+// Public route: get projects by userId (no token required)
+router.get("/public/:userId", async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const user = await User.findById(userId).select("projects");
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    res.json({ projects: user.projects });
+  } catch (err) {
+    console.error("Public projects error:", err);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
 module.exports = router;
